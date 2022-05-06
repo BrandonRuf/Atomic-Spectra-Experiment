@@ -8,6 +8,23 @@ byte get_direction(){
   return motor_direction;
 }
 
+MODES get_mode(){
+  return mode;
+}
+
+void get_knob(){
+  /*
+   * Get the position of the front pnael knob 
+   * on the Monochromator.
+   */
+  return;
+}
+
 void set_direction(byte dir){
   motor_direction = dir;
 }
+
+void set_mode(MODES _mode){
+    mode = _mode;
+}
+ 

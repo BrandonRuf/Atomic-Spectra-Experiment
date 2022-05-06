@@ -24,7 +24,9 @@ char * strtok_index;              // Used by strtok() as an index
 unsigned int motor_position = 0;
 byte         motor_direction;
 
+unsigned int PM_voltage;
 unsigned int displacement;
+unsigned int sum;
 unsigned int knob_position;
 boolean HOME_FAILED = false;
 
@@ -50,7 +52,7 @@ void set_direction(byte dir){
 bool check_position(){
   /*
    * Check if motor has exceeded position limits,
-   * as defined by the macros MAX_STEP, MIN_STEP. 
+   * as defined in software by the macros MAX_STEP, MIN_STEP. 
    */
    if (motor_position > MAX_STEP) return true;
    if (motor_position < MIN_STEP) return true;
@@ -115,7 +117,7 @@ void loop() {
       parseData();                      // Parse the data for commands
       newData = false;                  // Reset newData flag
   }
-
+  get_knob();
   if (mode == HOME) home();
   if (mode == SCAN) scan();
   
