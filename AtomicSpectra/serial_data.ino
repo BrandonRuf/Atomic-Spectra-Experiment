@@ -44,22 +44,10 @@ void parseData() {
    strtok_index = strtok(temp_data,",");   // Get the first part - the string
    strcpy(functionCall, strtok_index);     // Copy it to function_call
    strtok_index = strtok(NULL, ",");
-    
-  if(strcmp(functionCall,"set_parameters") == 0){
-    float _band       = atof(strtok_index);     
-
-    strtok_index      = strtok(NULL, ",");
-    float _t_i        = atof(strtok_index);
-    
-    strtok_index      = strtok(NULL, ",");
-    float _t_d        = atof(strtok_index);
-
-    set_parameters(_band, _t_i, _t_d);
-  }
   
   if(strcmp(functionCall,"set_direction") == 0){ 
-    int dir = atoi(strtok_index);
-    motor_direction = (bool) dir;
+    bool dir = atoi(strtok_index);
+    set_direction(dir);
   }
   
   if(strcmp(functionCall,"set_mode")        == 0){
@@ -79,69 +67,53 @@ void parseData() {
   if(strcmp(functionCall,"step_motor")      == 0){
     unsigned int number_steps = atoi(strtok_index); 
     for(int i = 0; i < number_steps; i++){
-      if( ch)
       step_motor();
     }
   }
   
-  if(strcmp(functionCall,"set_setpoint")    == 0){      
-    set_setpoint(atof(strtok_index));    
+  if(strcmp(functionCall,"get_knob")    == 0){
+    Serial.println(get_knob());          
   }
   
   if(strcmp(functionCall,"get_pmt")         == 0){ 
-      Serial.println(get_pmt());
+    Serial.println(get_pmt());
   }
   
   if(strcmp(functionCall,"get_mode")        == 0){ 
     MODES _mode = get_mode();
-    if(_mode == CLOSED_LOOP){
-      Serial.println("CLOSED_LOOP");        
+    if(_mode == SCAN){
+      Serial.println("SCAN");        
+    }
+    else if(_mode == IDL){
+      Serial.println("IDL"); 
     }
     else{
-      Serial.println("OPEN_LOOP");
+      Serial.println("HOME");
     }
   }
   
-  if(strcmp(functionCall,"get_temperature") == 0){
-    float _temperature = get_temperature();
-    Serial.println(_temperature,2);
+  if(strcmp(functionCall,"get_position") == 0){
+    Serial.println(get_position());
+  }
+   
+  if(strcmp(functionCall,"get_u1") == 0){
+    Serial.println(u1);
   }
   
-  if(strcmp(functionCall,"get_parameters")  == 0){
-    Serial.print(band,4);
-    Serial.print(',');
-    Serial.print(t_integral,4);
-    Serial.print(',');
-    Serial.println(t_derivative,4);   
+  if(strcmp(functionCall,"get_max_limit")  == 0){ 
+    Serial.println(digitalRead(PIN_SWITCH_MAX)); 
   }
   
-  if(strcmp(functionCall,"get_setpoint")    == 0){ 
-    Serial.println(get_setpoint(),4);    
+  if(strcmp(functionCall,"get_min_limit")    == 0){ 
+   Serial.println(digitalRead(PIN_SWITCH_MIN)); 
   }
   
-  if(strcmp(functionCall,"get_period")    == 0){ 
-    Serial.println(get_period());    
+  if(strcmp(functionCall,"get_direction")    == 0){
+    Serial.println(get_direction());   
   }
 
-  if(strcmp(functionCall,"get_all_variables") == 0){
-    Serial.print(get_temperature(),2);
-    Serial.print(',');
-    Serial.print(get_setpoint(),4);
-    Serial.print(',');
-    Serial.print(get_dac());
-    Serial.print(',');
-    Serial.print(band,4);
-    Serial.print(',');
-    Serial.print(t_integral,4);
-    Serial.print(',');
-    Serial.print(t_derivative,4); 
-    Serial.print(',');
-    Serial.print(get_period());
-    Serial.print(','); 
-    Serial.print(u1,4); 
-    Serial.print(',');
-    Serial.print(u2,4); 
-    Serial.print(',');
-    Serial.println(u3,4); 
+  if(strcmp(functionCall,"home") == 0){
+    home();
   }
+
 }
