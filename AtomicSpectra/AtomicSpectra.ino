@@ -1,5 +1,5 @@
 /*
- * For use in McGill University physics course PHYS-359/439.
+ * For use in the Atomic Spectra experiment in McGill University physics course(s) PHYS-359/439.
  * Written by Brandon Ruffolo in 2022.
  * Based on previous software written by Mark Orchard-Webb (2017) w/ modifications by Katie Savard (2019).
  */
@@ -24,7 +24,7 @@ char * strtok_index;              // Used by strtok() as an index
 unsigned int motor_position = 0;
 byte         motor_direction;
 
-unsigned int PM_voltage;
+unsigned int pmt_voltage;
 unsigned int displacement;
 unsigned int sum;
 unsigned int knob_position;
@@ -35,7 +35,7 @@ enum MODES{HOME,SCAN,IDLE};
 enum MODES mode = HOME;
 const char *MODE_NAMES[] = {"HOME","SCAN","IDLE"};
 
-void step_motor(){
+boolean step_motor(){
   digitalWrite(PIN_STEP,1);       // Set step pin high
   delayMicroseconds(STEP_DELAY);  // Delay
   digitalWrite(PIN_STEP,0);       // Set step pin high
@@ -49,7 +49,7 @@ void set_direction(byte dir){
   motor_direction = dir;
 }
 
-bool check_position(){
+bool check_bounds(){
   /*
    * Check if motor has exceeded position limits,
    * as defined in software by the macros MAX_STEP, MIN_STEP. 
@@ -68,11 +68,11 @@ bool check_max_limit(){
 }
 
 void home(){
-  set_direction(LOW); // Set to increasing motor direction
+  set_direction(LOW);                 // Set to increasing motor direction
 
   /* Step the motor and count steps until hitting the switch */
   while(1){ 
-      if( check_position() ){
+      if( check_bounds() ){
         HOME_FAILED = true;          // Record homing failure
         break;                       // Exit
       } 

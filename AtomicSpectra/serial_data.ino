@@ -57,14 +57,9 @@ void parseData() {
     set_parameters(_band, _t_i, _t_d);
   }
   
-  if(strcmp(functionCall,"set_dac") == 0){ 
-    int voltage_12bit = atoi(strtok_index);
-
-    if(mode == OPEN_LOOP){
-      set_dac(voltage_12bit);
-      return;
-    }
-    Serial.println("Arduino must be in OPEN_LOOP mode in order to directly manipulate the dac output.");
+  if(strcmp(functionCall,"set_direction") == 0){ 
+    int dir = atoi(strtok_index);
+    motor_direction = (bool) dir;
   }
   
   if(strcmp(functionCall,"set_mode")        == 0){
@@ -81,16 +76,20 @@ void parseData() {
     }
   }
   
-  if(strcmp(functionCall,"set_period")      == 0){
-    set_period(atoi(strtok_index));
+  if(strcmp(functionCall,"step_motor")      == 0){
+    unsigned int number_steps = atoi(strtok_index); 
+    for(int i = 0; i < number_steps; i++){
+      if( ch)
+      step_motor();
+    }
   }
   
   if(strcmp(functionCall,"set_setpoint")    == 0){      
     set_setpoint(atof(strtok_index));    
   }
   
-  if(strcmp(functionCall,"get_dac")         == 0){ 
-      Serial.println(get_dac());
+  if(strcmp(functionCall,"get_pmt")         == 0){ 
+      Serial.println(get_pmt());
   }
   
   if(strcmp(functionCall,"get_mode")        == 0){ 
