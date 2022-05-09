@@ -5,8 +5,6 @@
  */
  
 #define BAUD 115200              
-#define MIN_STEP 0
-#define MAX_STEP 58860           // 147.15 * 400
 #define STEP_DELAY 560           // Step delay for motor pulses
 
 #define PIN_STEP 6
@@ -14,6 +12,7 @@
 #define PIN_SWITCH_MAX 4
 #define PIN_SWITCH_MIN 8
 #define PIN_KNOB A0
+#define PIN_PMT  A1
 
 /** Serial data handling **/
 const byte data_size = 64;        // Size of the data buffer receiving from the serial line 
@@ -26,19 +25,20 @@ char * strtok_index;              // Used by strtok() as an index
 unsigned int motor_position = 0;  // (initially 1 to account for arduino reset)
 bool         motor_direction;
 
-unsigned int pmt_voltage;
+unsigned int MAX_STEP = 58860     // 147.15 * (400 microsteps/step) (VERIFIED EMPIRICALLY)
+unsigned int MIN_STEP = 100       // VERIFY THIS
+
+
 unsigned int displacement;
 unsigned int sum;
-unsigned int knob_position;
-boolean HOME_FAILED = false;
-
 unsigned int u1;
+
+boolean HOME_FAILED = false;
 
 /** Control Modes **/
 enum MODES{HOME,SCAN,IDL};
 enum MODES mode = SCAN;
 const char *MODE_NAMES[] = {"HOME","SCAN","IDLE"};
-
 
 void step_motor(){
   /*

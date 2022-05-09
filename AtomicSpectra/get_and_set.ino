@@ -1,10 +1,8 @@
-#define sgn(x) ((x) < 0 ? -1 : ((x) > 0 ? 1 : 0)) // Gets the sign (positive or negative) of the argument
-
 unsigned int get_pmt(){
   /*
    * Get PMT voltage.
    */
-  return pmt_voltage;
+  return analogRead(PIN_PMT);
 }
 
 unsigned int get_position(){
