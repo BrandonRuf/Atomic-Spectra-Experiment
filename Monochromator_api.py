@@ -24,10 +24,8 @@ class Monochromator_api():
         How long to wait for responses before giving up (s). 
         
     """
-    def __init__(self, port='COM4', address=0, baudrate=115200, timeout=15):
-        
-        self.n = 0
-        
+    def __init__(self, port='COM4', address=0, baudrate=115200, timeout=3):
+                
         if not _serial:
             print('You need to install pyserial to use the Atomic Spectra Monochromator.')
             self.simulation_mode = True
@@ -41,13 +39,18 @@ class Monochromator_api():
         if not self.simulation_mode:
             try:
                 # Create the instrument and ensure the settings are correct.
-                self.device = _serial.Serial(port, baudrate)
+                self.serial = _serial.Serial(port = port, baudrate = baudrate, timeout = timeout)
+                
             # Something went wrong. Go into simulation mode.
             except Exception as e:
                   print('Could not open connection to "'+port+':'+'" at baudrate '+str(baudrate)+'. Entering simulation mode.')
                   print(e)
                   self.simulation_mode = True
-                  self.device = None
+                  self.serial = None
+        
+        # Give the arduino time to run the setup loop
+        _time.sleep(1)
+        
     
     def set_mode(self,mode):
         """
@@ -82,7 +85,15 @@ class Monochromator_api():
         """
         self.write("set_direction,%d"%direction)
         
+    def get_calibration(self):
+        """
+        Get the current status of operation.
         
+        """
+        self.write('get_calibration')
+        
+        return self.read()
+    
     def get_direction(self):
         """
         Get the current motor direction.
@@ -116,13 +127,20 @@ class Monochromator_api():
         Returns
         -------
         int
-            Digitized voltage (0-1023).
+            Digitized voltage [0-2**(bit_depth)-1].
 
         """
         
         self.write("get_pmt")
         
         return int(self.read())
+    
+    def home(self):
+        """
+        Home the motor.
+        """
+        self.write('home')
+        
         
     def write(self,raw_data):
         """
@@ -156,6 +174,6 @@ class Monochromator_api():
         """
         Disconnects the port.
         """
-        if not self.simulation_mode and self.device != None: 
-            self.device.close()
-            self.device = None
+        if not self.simulation_mode and self.serial != None: 
+            self.serial.close()
+            self.serial = None
