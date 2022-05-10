@@ -368,10 +368,10 @@ class Monochrmator(serial_gui_base):
         
         # Get the time, temperature, and setpoint
         t = current_time - self.t0
-
+        '''
         self.plot.append_row([t, t**2], ckeys=['Time (s)', 'Counts (C)'])
         self.plot.plot()
-
+        '''
         
         # Update the GUI
         self.window.process_events()
@@ -379,16 +379,23 @@ class Monochrmator(serial_gui_base):
     def gui_components(self,name):
         
         self.grid_upper_mid = self.window.place_object(_g.GridLayout(margins=False), alignment = 1)
+        self.window.new_autorow()
+        self.grid_lower_mid = self.window.place_object(_g.GridLayout(margins=False), alignment = 1)
         
         #self.window.new_autorow()       
         #self.grid_lower_mid = self.window.place_object(_g.GridLayout(margins=False), alignment = 0)
         
-        # Add 
-        self.grid_upper_mid.add(_g.Label('Motor Calibration:'), alignment=1, row_span=1).set_style(style_2)
+        
+        self.grid_upper_mid.add(_g.Label('Status:'), alignment=1, row_span=1).set_style(style_2)
         
         self.textbox_status = self.grid_upper_mid.add(_g.TextBox(
             "--", tip='A test.'),
             alignment=1).set_width(150).disable().set_style(style_2)
+        
+        self.grid_lower_mid.new_autorow()
+        self.grid_lower_mid.add(_g.Label("Motor Control:"))
+        self.grid_lower_mid.add(_g.Button("Front Panel"))
+        self.grid_lower_mid.add(_g.Button("Computer"))
         
         self.label__status = self.grid_upper_mid.add(_g.Label(""),
             column = 2, row_span=2).set_style('font-size: 17pt; font-weight: bold; color: '+('lightcoral'))
@@ -417,18 +424,80 @@ class Monochrmator(serial_gui_base):
         self.tabs = self.grid_bot.add(_g.TabArea(self.name+'.tabs'), alignment=0)
         
         # Create main tab
-        self.tab_histogram = self.tabs.add_tab('Motor')
-        self.tab_scatter   = self.tabs.add_tab('PMT')
-       
-       
+        self.tab_1 = self.tabs.add_tab('Motor')
+        self.tab_2 = self.tabs.add_tab('PMT')
+        
+        self.tab_1.add(_g.Label('Status:'), alignment=1, row_span=1).set_style('font-size: 17pt; font-weight: bold; color: white')
+        self.tab_1.new_autorow()
+        
+                # Add 
+        self.tab_1.add(_g.Label('Position:'), alignment=2, row_span=1).set_style('font-size: 14pt; font-weight: bold; color: cyan')
+        
+        self.numberbox_position = self.tab_1.add(_g.NumberBox(0, tip='A test.'),
+            alignment=2).set_width(125).disable().set_style('font-size: 14pt; font-weight: bold; color: cyan')
+        
+        self.tab_1.add(_g.Label('Min Limit:'), alignment=2, row_span=1).set_style('font-size: 14pt; font-weight: bold; color: cyan')
+        self.numberbox_min = self.tab_1.add(_g.Button(text=""),
+            alignment=1).set_width(20).disable().set_colors(background='limegreen')
+        
+        self.numberbox_min = self.tab_1.add(_g.NumberBox(value =.23),
+            alignment=1).set_width(100).disable().set_style('font-size: 14pt; font-weight: bold; color: cyan')
+        
+        self.tab_1.new_autorow()
+        
+        self.tab_1.add(_g.Label('Speed:'), alignment=2, row_span=1).set_style('font-size: 14pt; font-weight: bold; color: cyan')
+        self.numberbox_speed = self.tab_1.add(_g.NumberBox(0, tip='A test.'),
+            alignment=2).set_width(125).disable().set_style('font-size: 14pt; font-weight: bold; color: cyan')
+        
+        
+        self.tab_1.add(_g.Label('Max Limit:'), alignment=2, row_span=1).set_style('font-size: 14pt; font-weight: bold; color: cyan')
+        self.numberbox_min = self.tab_1.add(_g.Button(text=""),
+            alignment=1).set_width(20).disable().set_colors(background='limegreen')
+        
+        self.numberbox_min = self.tab_1.add(_g.NumberBox(value =147.15),
+            alignment=1).set_width(100).disable().set_style('font-size: 14pt; font-weight: bold; color: cyan')
+                
+
+        self.tab_1.new_autorow()
+        # Add 
+        self.tab_1.add(_g.Label('Calibration:'), alignment=2, row_span=1).set_style('font-size: 14pt; font-weight: bold; color: cyan')
+        
+        self.textbox_calibration = self.tab_1.add(_g.Button(text='Failed'),
+            alignment=2).set_width(125).disable().set_style('font-size: 14pt; font-weight: bold;').set_colors(text = "red",background='white')
+        self.button_test = self.tab_1.add(_g.Button(text="Home"),alignment = 1).set_height(30)
+        
+        self.tab_1.new_autorow()
+        
+        self.tab_1.add(_g.Label('Control:'), alignment=1, row_span=1).set_style('font-size: 17pt; font-weight: bold; color: white')
+        self.tab_1.new_autorow()
+        
+
+        
+                # Add 
+        self.tab_1.add(_g.Label('Target:'), alignment=2, row_span=1).set_style('font-size: 14pt; font-weight: bold; color: cyan')
+        self.numberbox_move_target = self.tab_1.add(_g.NumberBox(0, tip='A test.'),
+            alignment=2).set_width(100).disable().set_style('font-size: 14pt; font-weight: bold; color: cyan')
+        self.tab_1.new_autorow()
+        self.tab_1.add(_g.Label('Speed:'), alignment=2, row_span=1).set_style('font-size: 14pt; font-weight: bold; color: cyan')
+        self.numberbox_move_speed = self.tab_1.add(_g.NumberBox(0, tip='A test.'),
+            alignment=2).set_width(100).disable().set_style('font-size: 14pt; font-weight: bold; color: cyan')
+        
+        self.tab_1.new_autorow()
+        self.button_test = self.tab_1.add(_g.Button(text="Move"),alignment = 1).set_height(30)
+        self.tab_1.new_autorow()
+        
+        
+
+        '''
         # Add data plotting to main tab
-        self.plot = self.tab_histogram.add(_g.DataboxPlot(
+        self.plot = self.tab_1.add(_g.DataboxPlot(
             file_type='*.csv',
             autosettings_path=name+'.plot',
-            delimiter=',', alignment=0))
-        
-        
-        self.window.set_row_stretch(2, 100)
+            delimiter=',', alignment=0),column_span=10)
+        '''
+
+        self.tab_1.set_column_stretch(8, 100)
+
         
         # Timer for collecting data
         self.timer = _g.Timer(interval_ms=1000, single_shot=False)
