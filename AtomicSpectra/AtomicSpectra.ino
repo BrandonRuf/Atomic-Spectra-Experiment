@@ -25,20 +25,16 @@ char * strtok_index;              // Used by strtok() as an index
 unsigned int motor_position = 0;  // (initially 1 to account for arduino reset)
 bool         motor_direction;
 
-unsigned int MAX_STEP = 58860     // 147.15 * (400 microsteps/step) (VERIFIED EMPIRICALLY)
-unsigned int MIN_STEP = 100       // VERIFY THIS
+unsigned int MAX_STEP = 58860;    // 147.15 * (400 microsteps/step) (VERIFIED EMPIRICALLY)
+unsigned int MIN_STEP = 100;      // VERIFY THIS
 
 
 unsigned int displacement;
 unsigned int sum;
 unsigned int u1;
 
-boolean HOME_FAILED = false;
-
-/** Control Modes **/
-enum MODES{HOME,SCAN,IDL};
-enum MODES mode = SCAN;
-const char *MODE_NAMES[] = {"HOME","SCAN","IDLE"};
+enum STATUS{NOT_DONE, COMPLETED, FAILED, RECAL};
+enum STATUS motor_calibration = NOT_DONE;
 
 void step_motor(){
   /*
@@ -59,11 +55,11 @@ void setup() {
   pinMode(PIN_DIR ,OUTPUT);         // Motor direction pin
   
   pinMode(PIN_SWITCH_MAX, INPUT);   // Max limit switch monitor  
-  pinMode(PIN_SWITCH_MIN, INPUT);   // Min limit switch monitor
+  pinMode(PIN_SWITCH_MIN, INPUT);   // Min limit switch monitor 
 
-  digitalWrite(PIN_DIR,HIGH);
-  motor_direction = 1;
-  home();                           // Home the Monochromator          
+  pinMode(LED_BUILTIN, OUTPUT);
+  digitalWrite(LED_BUILTIN, LOW);
+
 }
 
 void loop() {
@@ -75,27 +71,26 @@ void loop() {
       parseData();                      // Parse the data for commands
       newData = false;                  // Reset newData flag
   }
-  get_knob();
-  if (mode == HOME) home();
-  if (mode == SCAN) scan();
 }
 
 void home(){
-  motor_position = 0;                 // Reset motor position
+  digitalWrite(LED_BUILTIN, HIGH);
+  
+  motor_position = 0;                 // Reset motor position variable
   set_direction(LOW);                 // Set to increasing motor direction
 
   /* Step the motor and count steps until hitting the switch */
   while(1){ 
       if( check_bounds() ){
-        HOME_FAILED = true;          // Record homing failure
+        set_calibration(FAILED);     // Record homing failure
         break;                       // Exit
       } 
       if( check_max_limit() ) break; // Exit if switch was triggered 
       step_motor();                  // Step the motor
   }
   set_direction(HIGH);               // Reverse direction
-  displacement = motor_position;     // Save displacement to the limit switch
-  motor_position = MAX_STEP;         // To calculate absolute motor position         
+  displacement = motor_position;     // Save total displacement to the limit switch
+  motor_position = MAX_STEP;         // Set the motor position to its (now) known location         
     
   /* Bring the motor back to its original position */
   while(displacement){
@@ -103,10 +98,6 @@ void home(){
     displacement--;
   }
 
-  if(HOME_FAILED) mode = IDL;         // Home failure, switch to IDLE mode
-  else            mode = SCAN;        // Home successful, switch to SCAN mode
-}
-
-void scan(){
-  return;
+  if(get_calibration() != FAILED) set_calibration(COMPLETED); // Update motor calibration status
+  digitalWrite(LED_BUILTIN, LOW);
 }

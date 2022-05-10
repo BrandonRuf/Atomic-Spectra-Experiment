@@ -19,19 +19,21 @@ bool get_direction(){
   return motor_direction;
 }
 
-MODES get_mode(){
-  /*
-   * Get mode of operation.
-   */
-  return mode;
-}
-
 unsigned int get_knob(){
   /*
    * Get the position of the front panel knob 
    * on the Monochromator.
    */
    return analogRead(PIN_KNOB);
+}
+
+STATUS get_calibration(){
+  return motor_calibration;
+}
+
+
+void set_calibration(STATUS _status){
+  motor_calibration = _status;
 }
 
 void set_direction(bool dir){
@@ -44,19 +46,14 @@ void set_direction(bool dir){
   motor_direction = dir;         
 }
 
-void set_mode(MODES _mode){
-  /*
-   * Set mode of operation.
-   */
-   mode = _mode;
-} 
 
 bool check_bounds(){
   /*
+   * MODDED FOR DEBUG!!!!
    * Check if motor has exceeded position limits,
    * as defined in software by the macros MAX_STEP, MIN_STEP. 
    */
-   if (motor_position > MAX_STEP) return true;
+   if (motor_position > MAX_STEP/10) return true;
    else return false;
 }
 

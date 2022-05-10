@@ -50,70 +50,37 @@ void parseData() {
     set_direction(dir);
   }
   
-  if(strcmp(functionCall,"set_mode")        == 0){
-
-    if(strcmp(strtok_index,"HOME") == 0){
-      set_mode(HOME);
-    }   
-    else if(strcmp(strtok_index,"SCAN") == 0) {
-      set_mode(SCAN);
-    }
-    else{
-      Serial.println("Invaild Mode.");
-      return;
-    }
-  }
-  
-  if(strcmp(functionCall,"step_motor")      == 0){
+  if(strcmp(functionCall,"step_motor") == 0){
     unsigned int number_steps = atoi(strtok_index); 
+    
     for(int i = 0; i < number_steps; i++){
       step_motor();
     }
   }
   
-  if(strcmp(functionCall,"get_knob")    == 0){
-    Serial.println(get_knob());          
-  }
+  if(strcmp(functionCall,"get_knob") == 0) Serial.println(get_knob());          
   
-  if(strcmp(functionCall,"get_pmt")         == 0){ 
-    Serial.println(get_pmt());
-  }
-  
-  if(strcmp(functionCall,"get_mode")        == 0){ 
-    MODES _mode = get_mode();
-    if(_mode == SCAN){
-      Serial.println("SCAN");        
-    }
-    else if(_mode == IDL){
-      Serial.println("IDL"); 
-    }
-    else{
-      Serial.println("HOME");
-    }
-  }
-  
-  if(strcmp(functionCall,"get_position") == 0){
-    Serial.println(get_position());
-  }
-   
-  if(strcmp(functionCall,"get_u1") == 0){
-    Serial.println(u1);
-  }
-  
-  if(strcmp(functionCall,"get_max_limit")  == 0){ 
-    Serial.println(digitalRead(PIN_SWITCH_MAX)); 
-  }
-  
-  if(strcmp(functionCall,"get_min_limit")    == 0){ 
-   Serial.println(digitalRead(PIN_SWITCH_MIN)); 
-  }
-  
-  if(strcmp(functionCall,"get_direction")    == 0){
-    Serial.println(get_direction());   
-  }
+  if(strcmp(functionCall,"get_pmt") == 0)  Serial.println(get_pmt());
 
-  if(strcmp(functionCall,"home") == 0){
-    home();
+  if(strcmp(functionCall,"get_calibration") == 0){ 
+    STATUS _status = get_calibration();
+    if     (_status == NOT_DONE)  Serial.println("NOT DONE");        
+    else if(_status == FAILED)    Serial.println("FAILED"); 
+    else if(_status == COMPLETED) Serial.println("COMPLETED");
+    else if(_status == RECAL)     Serial.println("RECALIBRATION");
   }
+  
+  if(strcmp(functionCall,"get_position")  == 0) Serial.println(get_position());
+   
+  if(strcmp(functionCall,"get_u1")        == 0) Serial.println(u1);
+  
+  if(strcmp(functionCall,"get_max_limit") == 0) Serial.println(digitalRead(PIN_SWITCH_MAX)); 
+  
+  if(strcmp(functionCall,"get_min_limit") == 0) Serial.println(digitalRead(PIN_SWITCH_MIN)); 
+  
+  if(strcmp(functionCall,"get_direction") == 0) Serial.println(get_direction());   
+  
+  if(strcmp(functionCall,"home") == 0)          home();
+  
 
 }
