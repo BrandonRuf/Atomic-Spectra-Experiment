@@ -7,7 +7,7 @@ _serial_right_marker = '>'
 
 _debug_enabled       = True 
 
-MODES = ["HOME", "SCAN", "IDLE"]
+CONTROL_MODES = ["FRONT_PANEL", "COMPUTER"]
 
 class Monochromator_api():
     """
@@ -49,12 +49,12 @@ class Monochromator_api():
                   self.serial = None
         
         # Give the arduino time to run the setup loop
-        _time.sleep(1)
+        _time.sleep(2)
         
     
-    def set_mode(self,mode):
+    def set_control(self,mode):
         """
-        Set the current operating mode of the of the monochromator.
+        Set the control mode of the of the monochromator motor.
         
         Parameters
         ----------
@@ -63,15 +63,29 @@ class Monochromator_api():
 
         """
         
-        if mode not in MODES:
+        if mode not in CONTROL_MODES:
             print("Controller mode has not been changed. %s is not a vaild mode."%mode)
             return 
         
-        if self.simulation: 
-            self.simulation_mode = mode
+        if self.simulation_mode: 
             return
         
-        self.write("set_mode,%s"%mode)
+        self.write("set_control,%s"%mode)
+        
+    def get_control(self):
+        """
+        Get the control mode of the of the monochromator motor.
+        
+        Returns
+        ----------
+        mode : str
+            The current operating mode.
+
+        """
+        
+        self.write("get_control")
+        
+        return self.read()
         
     def set_direction(self, direction):
         """
@@ -140,6 +154,9 @@ class Monochromator_api():
         Home the motor.
         """
         self.write('home')
+        
+        if self.read() == "HOMING": return True
+        else                      : return False
         
         
     def write(self,raw_data):
