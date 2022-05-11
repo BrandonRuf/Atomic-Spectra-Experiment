@@ -22,19 +22,23 @@ char functionCall[20]  = {0};     //
 boolean newData = false;          // Flag used to indicate if new data has been found on the serial line
 char * strtok_index;              // Used by strtok() as an index
 
-unsigned int motor_position = 0;  // (initially 1 to account for arduino reset)
-bool         motor_direction;
-
+/** Motor control **/
+unsigned int motor_position  = 0; // $$(initially 1 to account for arduino reset?)$$
+bool         motor_direction = 0;
 unsigned int MAX_STEP = 58860;    // 147.15 * (400 microsteps/step) (VERIFIED EMPIRICALLY)
 unsigned int MIN_STEP = 100;      // VERIFY THIS
 
-
+/** Miscellaneous **/ 
 unsigned int displacement;
 unsigned int sum;
 unsigned int u1;
 
-enum STATUS{NOT_DONE, COMPLETED, FAILED, RECAL};
-enum STATUS motor_calibration = NOT_DONE;
+/** Status indicators **/
+enum CALIBRATION{NOT_DONE, COMPLETED, FAILED, RECAL};
+enum CALIBRATION motor_calibration = NOT_DONE;
+
+enum CONTROL_MODE{FRONT_PANEL, COMPUTER};
+enum CONTROL_MODE motor_control = LOCAL;
 
 void step_motor(){
   /*
@@ -57,9 +61,9 @@ void setup() {
   pinMode(PIN_SWITCH_MAX, INPUT);   // Max limit switch monitor  
   pinMode(PIN_SWITCH_MIN, INPUT);   // Min limit switch monitor 
 
-  pinMode(LED_BUILTIN, OUTPUT);
-  digitalWrite(LED_BUILTIN, LOW);
+  pinMode(LED_BUILTIN, OUTPUT);     // Built-in led for debug purposes
 
+  if(_debug) set_LED(LOW);
 }
 
 void loop() {
@@ -74,7 +78,7 @@ void loop() {
 }
 
 void home(){
-  digitalWrite(LED_BUILTIN, HIGH);
+  if(_debug) set_LED(HIGH);
   
   motor_position = 0;                 // Reset motor position variable
   set_direction(LOW);                 // Set to increasing motor direction
@@ -99,5 +103,5 @@ void home(){
   }
 
   if(get_calibration() != FAILED) set_calibration(COMPLETED); // Update motor calibration status
-  digitalWrite(LED_BUILTIN, LOW);
+  if(debug) set_LED(LOW);
 }

@@ -80,7 +80,10 @@ void parseData() {
   
   if(strcmp(functionCall,"get_direction") == 0) Serial.println(get_direction());   
   
-  if(strcmp(functionCall,"home") == 0)          home();
+  if(strcmp(functionCall,"home") == 0){
+    Serial.println("HOMING");
+    home();
+  }
   
 
 }

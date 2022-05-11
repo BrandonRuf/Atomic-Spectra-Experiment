@@ -1,20 +1,22 @@
 unsigned int get_pmt(){
   /*
    * Get PMT voltage.
+   * Returns a 10-bit number (0-1023).
    */
   return analogRead(PIN_PMT);
 }
 
 unsigned int get_position(){
   /*
-   * Get absolute motor position 
+   * Get absolute motor position. 
    */
   return motor_position;
 }
 
 bool get_direction(){
   /*
-   * Get motor direction.
+   * Get motor direction. LOW and HIGH 
+   * are the forward and reverse directions, respectively.
    */
   return motor_direction;
 }
@@ -27,12 +29,18 @@ unsigned int get_knob(){
    return analogRead(PIN_KNOB);
 }
 
-STATUS get_calibration(){
+CALIBRATION get_calibration(){
+  /*
+   * Get the current calibration of the motor.
+   */
   return motor_calibration;
 }
 
 
-void set_calibration(STATUS _status){
+void set_calibration(CALIBRATION _status){
+  /*
+   * Set the calibration of the motor.
+   */
   motor_calibration = _status;
 }
 
@@ -44,6 +52,14 @@ void set_direction(bool dir){
    */
   digitalWrite(PIN_DIR,dir);     
   motor_direction = dir;         
+}
+
+void set_LED(bool _power){
+  /*
+   * Set the state of the built-in led on the 
+   * arduino board (connected to pin 13).
+   */
+  digitalWrite(LED_BUILTIN, _power);
 }
 
 
