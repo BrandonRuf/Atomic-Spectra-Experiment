@@ -379,11 +379,8 @@ class Monochrmator(serial_gui_base):
     def gui_components(self,name):
         
         self.grid_upper_mid = self.window.place_object(_g.GridLayout(margins=False), alignment = 1)
-        self.window.new_autorow()
-        self.grid_lower_mid = self.window.place_object(_g.GridLayout(margins=False), alignment = 1)
         
-        #self.window.new_autorow()       
-        #self.grid_lower_mid = self.window.place_object(_g.GridLayout(margins=False), alignment = 0)
+
         
         
         self.grid_upper_mid.add(_g.Label('Status:'), alignment=1, row_span=1).set_style(style_2)
@@ -392,13 +389,33 @@ class Monochrmator(serial_gui_base):
             "--", tip='A test.'),
             alignment=1).set_width(150).disable().set_style(style_2)
         
-        self.grid_lower_mid.new_autorow()
-        self.grid_lower_mid.add(_g.Label("Motor Control:"))
-        self.grid_lower_mid.add(_g.Button("Front Panel"))
-        self.grid_lower_mid.add(_g.Button("Computer"))
+        self.grid_upper_mid.new_autorow()
+        self.grid_upper_mid.add(_g.Label('Position:'), alignment=2, row_span=1).set_style('font-size: 14pt; font-weight: bold; color: cyan')
+        self.numberbox_position = self.grid_upper_mid.add(_g.NumberBox(0, tip='A test.'),
+            alignment=2).set_width(125).disable().set_style('font-size: 14pt; font-weight: bold; color: cyan')
         
-        self.label__status = self.grid_upper_mid.add(_g.Label(""),
-            column = 2, row_span=2).set_style('font-size: 17pt; font-weight: bold; color: '+('lightcoral'))
+        self.grid_upper_mid.add(_g.Label('Calibration:'), alignment=2, row_span=1).set_style('font-size: 14pt; font-weight: bold; color: cyan')
+        self.textbox_calibration = self.grid_upper_mid.add(_g.Button(text='Completed'),
+            alignment=2).set_width(150).disable().set_style('font-size: 14pt; font-weight: bold;').set_colors(text = "limegreen",background='white')
+        
+        self.grid_upper_mid.add(_g.Label('Max Limit:'), alignment=2, row_span=1).set_style('font-size: 14pt; font-weight: bold; color: cyan')
+        self.numberbox_min = self.grid_upper_mid.add(_g.Button(text=""),
+            alignment=2).set_width(20).disable().set_colors(background='limegreen')
+        
+        self.grid_upper_mid.new_autorow()
+        self.grid_upper_mid.add(_g.Label('Speed:'), alignment=2, row_span=1).set_style('font-size: 14pt; font-weight: bold; color: cyan')
+        self.numberbox_speed = self.grid_upper_mid.add(_g.NumberBox(0, tip='A test.'),
+            alignment=2).set_width(125).disable().set_style('font-size: 14pt; font-weight: bold; color: cyan')
+        
+        self.grid_upper_mid.add(_g.Label('Control:'), alignment=2, row_span=1).set_style('font-size: 14pt; font-weight: bold; color: cyan')
+        self.textbox_control = self.grid_upper_mid.add(_g.Button(text='Front Panel'),
+            alignment=2).set_width(150).disable().set_style('font-size: 14pt; font-weight: bold;').set_colors(text = "white",background='royalblue')
+        
+        self.grid_upper_mid.add(_g.Label('Min Limit:'), alignment=2, row_span=1).set_style('font-size: 14pt; font-weight: bold; color: cyan')
+        self.numberbox_max = self.grid_upper_mid.add(_g.Button(text=""),
+            alignment=2).set_width(20).disable().set_colors(background='limegreen')
+        
+        
         
         '''
         self.grid_upper_mid.new_autorow()
@@ -424,17 +441,15 @@ class Monochrmator(serial_gui_base):
         self.tabs = self.grid_bot.add(_g.TabArea(self.name+'.tabs'), alignment=0)
         
         # Create main tab
-        self.tab_1 = self.tabs.add_tab('Motor')
         self.tab_2 = self.tabs.add_tab('PMT')
+        self.tab_1 = self.tabs.add_tab('Motor')
+        
         
         self.tab_1.add(_g.Label('Status:'), alignment=1, row_span=1).set_style('font-size: 17pt; font-weight: bold; color: white')
         self.tab_1.new_autorow()
         
                 # Add 
-        self.tab_1.add(_g.Label('Position:'), alignment=2, row_span=1).set_style('font-size: 14pt; font-weight: bold; color: cyan')
-        
-        self.numberbox_position = self.tab_1.add(_g.NumberBox(0, tip='A test.'),
-            alignment=2).set_width(125).disable().set_style('font-size: 14pt; font-weight: bold; color: cyan')
+
         
         self.tab_1.add(_g.Label('Min Limit:'), alignment=2, row_span=1).set_style('font-size: 14pt; font-weight: bold; color: cyan')
         self.numberbox_min = self.tab_1.add(_g.Button(text=""),
@@ -445,9 +460,7 @@ class Monochrmator(serial_gui_base):
         
         self.tab_1.new_autorow()
         
-        self.tab_1.add(_g.Label('Speed:'), alignment=2, row_span=1).set_style('font-size: 14pt; font-weight: bold; color: cyan')
-        self.numberbox_speed = self.tab_1.add(_g.NumberBox(0, tip='A test.'),
-            alignment=2).set_width(125).disable().set_style('font-size: 14pt; font-weight: bold; color: cyan')
+
         
         
         self.tab_1.add(_g.Label('Max Limit:'), alignment=2, row_span=1).set_style('font-size: 14pt; font-weight: bold; color: cyan')
@@ -460,10 +473,7 @@ class Monochrmator(serial_gui_base):
 
         self.tab_1.new_autorow()
         # Add 
-        self.tab_1.add(_g.Label('Calibration:'), alignment=2, row_span=1).set_style('font-size: 14pt; font-weight: bold; color: cyan')
-        
-        self.textbox_calibration = self.tab_1.add(_g.Button(text='Failed'),
-            alignment=2).set_width(125).disable().set_style('font-size: 14pt; font-weight: bold;').set_colors(text = "red",background='white')
+
         self.button_test = self.tab_1.add(_g.Button(text="Home"),alignment = 1).set_height(30)
         
         self.tab_1.new_autorow()
