@@ -44,46 +44,42 @@ void parseData() {
    strtok_index = strtok(temp_data,",");   // Get the first part - the string
    strcpy(functionCall, strtok_index);     // Copy it to function_call
    strtok_index = strtok(NULL, ",");
-  
-  if(strcmp(functionCall,"set_direction") == 0){ 
-    bool dir = atoi(strtok_index);
-    set_direction(dir);
-  }
-  
-  if(strcmp(functionCall,"step_motor") == 0){
+
+  if(strcmp(functionCall,"step_motor")    == 0){
     unsigned int number_steps = atoi(strtok_index); 
     
     for(int i = 0; i < number_steps; i++){
       step_motor();
     }
   }
-  
-  if(strcmp(functionCall,"get_knob") == 0) Serial.println(get_knob());          
-  
-  if(strcmp(functionCall,"get_pmt") == 0)  Serial.println(get_pmt());
 
-  if(strcmp(functionCall,"get_calibration") == 0){ 
-    STATUS _status = get_calibration();
-    if     (_status == NOT_DONE)  Serial.println("NOT DONE");        
-    else if(_status == FAILED)    Serial.println("FAILED"); 
-    else if(_status == COMPLETED) Serial.println("COMPLETED");
-    else if(_status == RECAL)     Serial.println("RECALIBRATION");
+  else if(strcmp(functionCall,"get_pmt")         == 0) Serial.println(get_pmt());
+  
+  else if(strcmp(functionCall,"set_direction")   == 0) set_direction(atoi(strtok_index));
+
+  else if(strcmp(functionCall,"get_direction")   == 0) Serial.println(get_direction());   
+
+  else if(strcmp(functionCall,"set_control")     == 0){
+    if     (strcmp(strtok_index,"FRONT_PANEL") == 0) set_control(FRONT_PANEL);
+    else if(strcmp(strtok_index,"COMPUTER")    == 0) set_control(COMPUTER);
   }
+
+  else if(strcmp(functionCall,"get_control")     == 0) Serial.println(CONTROL_MODE_NAMES[get_control()]);
   
-  if(strcmp(functionCall,"get_position")  == 0) Serial.println(get_position());
+  else if(strcmp(functionCall,"get_knob")        == 0) Serial.println(get_knob());          
+  
+  else if(strcmp(functionCall,"get_calibration") == 0) Serial.println(CALIBRATION_NAMES[get_calibration()]);
+
+  else if(strcmp(functionCall,"get_position")    == 0) Serial.println(get_position());
    
-  if(strcmp(functionCall,"get_u1")        == 0) Serial.println(u1);
+  else if(strcmp(functionCall,"get_u1")          == 0) Serial.println(u1);
   
-  if(strcmp(functionCall,"get_max_limit") == 0) Serial.println(digitalRead(PIN_SWITCH_MAX)); 
+  else if(strcmp(functionCall,"get_max_limit")   == 0) Serial.println(digitalRead(PIN_SWITCH_MAX)); 
   
-  if(strcmp(functionCall,"get_min_limit") == 0) Serial.println(digitalRead(PIN_SWITCH_MIN)); 
+  else if(strcmp(functionCall,"get_min_limit")   == 0) Serial.println(digitalRead(PIN_SWITCH_MIN)); 
   
-  if(strcmp(functionCall,"get_direction") == 0) Serial.println(get_direction());   
-  
-  if(strcmp(functionCall,"home") == 0){
+  else if(strcmp(functionCall,"home")            == 0){
     Serial.println("HOMING");
     home();
   }
-  
-
 }

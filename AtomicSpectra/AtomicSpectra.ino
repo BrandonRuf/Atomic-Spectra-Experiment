@@ -32,13 +32,16 @@ unsigned int MIN_STEP = 100;      // VERIFY THIS
 unsigned int displacement;
 unsigned int sum;
 unsigned int u1;
+bool _debug = true;
 
 /** Status indicators **/
 enum CALIBRATION{NOT_DONE, COMPLETED, FAILED, RECAL};
 enum CALIBRATION motor_calibration = NOT_DONE;
+const char *CALIBRATION_NAMES[] = {"NOT_DONE","COMPLETED","FAILED","RECAL"};
 
 enum CONTROL_MODE{FRONT_PANEL, COMPUTER};
-enum CONTROL_MODE motor_control = LOCAL;
+enum CONTROL_MODE motor_control = FRONT_PANEL;
+const char *CONTROL_MODE_NAMES[] = {"FRONT_PANEL","COMPUTER"};
 
 void step_motor(){
   /*
@@ -103,5 +106,5 @@ void home(){
   }
 
   if(get_calibration() != FAILED) set_calibration(COMPLETED); // Update motor calibration status
-  if(debug) set_LED(LOW);
+  if(_debug) set_LED(LOW);
 }

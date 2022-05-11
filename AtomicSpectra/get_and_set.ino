@@ -36,6 +36,9 @@ CALIBRATION get_calibration(){
   return motor_calibration;
 }
 
+CONTROL_MODE get_control(){
+  return motor_control;
+}
 
 void set_calibration(CALIBRATION _status){
   /*
@@ -60,6 +63,10 @@ void set_LED(bool _power){
    * arduino board (connected to pin 13).
    */
   digitalWrite(LED_BUILTIN, _power);
+}
+
+void set_control(CONTROL_MODE _mode){
+  motor_control = _mode;
 }
 
 
